@@ -30,7 +30,6 @@ subprojects {
         plugin("nu.studer.jooq")
     }
 
-
     group = "org.example"
     version = "1.0-SNAPSHOT"
 

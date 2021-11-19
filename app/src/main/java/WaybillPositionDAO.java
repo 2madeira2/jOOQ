@@ -82,7 +82,7 @@ public class WaybillPositionDAO implements DAO<WaybillPosition> {
         try (PreparedStatement preparedStatement = connection.prepareStatement(delete_request)) {
             preparedStatement.setInt(1, entity.getPosition());
             if (preparedStatement.executeUpdate() == 0) {
-                throw new IllegalStateException("Record with position = " + entity.getPosition() + " not found");
+                throw new IllegalStateException("Record with position  = " + entity.getPosition() + " not found");
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
