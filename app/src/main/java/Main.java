@@ -15,12 +15,6 @@ import static org.jooq.impl.DSL.sum;
 public class Main {
     public static void main(String[] args) {
 
-
-        final String second_request = "select w.org_sender from waybill w where w.waybill_num in (select wp.waybill from waybill_position wp where wp.amount > ?);";
-        final String third_request = "select sum(wp.amount)as total_amount, sum(wp.price) as total_price from waybill_position wp where wp.waybill in( select w.waybill_num from waybill w where w.waybill_date between ? and ?);";
-        final String fourth_request = "select avg(wp.price) from waybill_position wp where wp.waybill in( select w.waybill_num from waybill w where w.waybill_date between ? and ?);";
-
-
         final Flyway flyway = Flyway.configure().dataSource("jdbc:postgresql://127.0.0.1:5432/test", "postgres", "whoami")
                 .locations("db")
                 .load();
