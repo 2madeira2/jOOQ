@@ -51,3 +51,5 @@ nb-configuration.xml
 .vscode/
 .code-workspace
 .DS_Store
+.gitignore
+gradle/wrapper
