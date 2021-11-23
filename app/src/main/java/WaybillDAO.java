@@ -20,8 +20,8 @@ public class WaybillDAO implements DAO<Waybill> {
     }
 
     public Waybill get(int waybill_num) {
-        WaybillRecord record = context.selectFrom(WAYBILL)
-                .where(WAYBILL.WAYBILL_NUM.eq(waybill_num)).fetchOne();
+
+        WaybillRecord record = context.fetchOne(WAYBILL, WAYBILL.WAYBILL_NUM.eq(waybill_num));
 
         if(record == null){
             throw new IllegalStateException("No results for this request");
@@ -34,9 +34,7 @@ public class WaybillDAO implements DAO<Waybill> {
     @Override
     public List<Waybill> getAll() {
         final List<Waybill> all_list = new ArrayList<>();
-        Result<WaybillRecord> records = context
-                .selectFrom(WAYBILL)
-                .fetch();
+        Result<WaybillRecord> records = context.fetch(WAYBILL);
 
         for (WaybillRecord record : records) {
             all_list.add(new Waybill(record.getWaybillNum(), record.getWaybillDate(), record.getOrgSender()));
@@ -46,25 +44,29 @@ public class WaybillDAO implements DAO<Waybill> {
 
     @Override
     public void save(Waybill entity) {
-         context.insertInto(WAYBILL, WAYBILL.WAYBILL_NUM, WAYBILL.WAYBILL_DATE, WAYBILL.ORG_SENDER)
-                .values(entity.getWaybillNum(), entity.getWaybillDate(), entity.getOrgSender())
-                .execute();
+
+        final WaybillRecord record = context.newRecord(WAYBILL);
+        record.setWaybillNum(entity.getWaybillNum())
+                .setWaybillDate(entity.getWaybillDate())
+                .setOrgSender(entity.getOrgSender());
+        record.store();
+
     }
 
 
     @Override
     public void update(Waybill entity) {
-         context.update(WAYBILL)
-                .set(WAYBILL.WAYBILL_DATE, entity.getWaybillDate())
-                .set(WAYBILL.ORG_SENDER, entity.getOrgSender())
-                .where(WAYBILL.WAYBILL_NUM.eq(entity.getWaybillNum()))
-                .execute();
+        WaybillRecord record = context.fetchOne(WAYBILL, WAYBILL.WAYBILL_NUM.eq(entity.getWaybillNum()));
+        record.setWaybillDate(entity.getWaybillDate())
+              .setOrgSender(entity.getOrgSender());
+        record.store();
     }
 
     @Override
     public void delete(Waybill entity) {
-         context.delete(WAYBILL)
-                .where(WAYBILL.WAYBILL_NUM.eq(entity.getWaybillNum()))
-                .execute();
+
+        WaybillRecord record = context.fetchOne(WAYBILL, WAYBILL.WAYBILL_NUM.eq(entity.getWaybillNum()));
+        record.delete();
+        
     }
 }

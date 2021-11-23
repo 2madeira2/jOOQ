@@ -22,10 +22,7 @@ public final class NomenclatureDAO implements DAO<Nomenclature> {
     @Override
     public Nomenclature get(int id) {
 
-        NomenclatureRecord record = context
-                .selectFrom(NOMENCLATURE)
-                .where(NOMENCLATURE.ID.eq(id))
-                .fetchOne();
+        NomenclatureRecord record = context.fetchOne(NOMENCLATURE, NOMENCLATURE.ID.eq(id));
 
         if(record == null){
             throw new IllegalStateException("Nothing was found for your query");
@@ -40,9 +37,7 @@ public final class NomenclatureDAO implements DAO<Nomenclature> {
 
         final List<Nomenclature> all_list = new ArrayList<>();
 
-        Result<NomenclatureRecord> records = context
-                .selectFrom(NOMENCLATURE)
-                .fetch();
+        Result<NomenclatureRecord> records = context.fetch(NOMENCLATURE);
         for (NomenclatureRecord record : records) {
             all_list.add(new Nomenclature(record.getId(), record.getName(), Math.toIntExact(record.getInternalCode())));
         }
@@ -53,22 +48,22 @@ public final class NomenclatureDAO implements DAO<Nomenclature> {
     @Override
     public void save(Nomenclature entity) {
 
-         context.insertInto(NOMENCLATURE, NOMENCLATURE.ID, NOMENCLATURE.NAME, NOMENCLATURE.INTERNAL_CODE)
-                .values(entity.getId(), entity.getName(), (long) entity.getInternalCode())
-                .execute();
+        final NomenclatureRecord record = context.newRecord(NOMENCLATURE);
+        record.setId(entity.getId())
+              .setName(entity.getName())
+              .setInternalCode((long) entity.getInternalCode());
+        record.store();
 
     }
 
 
     @Override
     public void update(Nomenclature entity) {
-
-         context.update(NOMENCLATURE)
-                .set(NOMENCLATURE.NAME, entity.getName())
-                .set(NOMENCLATURE.INTERNAL_CODE, (long) entity.getInternalCode())
-                .where(NOMENCLATURE.ID.eq(entity.getId()))
-                .execute();
-
+        final NomenclatureRecord record = context.fetchOne(NOMENCLATURE,NOMENCLATURE.ID.eq(entity.getId()));
+        assert record != null;
+        record.setName(entity.getName())
+              .setInternalCode((long) entity.getInternalCode());
+         record.store();
     }
 
     @Override
